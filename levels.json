@@ -84,6 +84,7 @@
       "name": "Vagues Électriques",
       "difficulty": "Facile",
       "theme": "electric",
+      "music": "musiques/level3.mp3",
       "objects": [
         { "type": "spike", "x": 500, "height": 40 },
         { "type": "spike", "x": 750, "height": 40 },
@@ -125,6 +126,7 @@
       "name": "Cascade Cosmique",
       "difficulty": "Moyen",
       "theme": "cosmic",
+      "music": "musiques/level4.mp3",
       "objects": [
         { "type": "spike", "x": 450, "height": 40 },
         { "type": "spike", "x": 650, "height": 40 },
@@ -168,6 +170,7 @@
       "name": "Tempête Néon",
       "difficulty": "Moyen",
       "theme": "neon",
+      "music": "musiques/level5.mp3",
       "objects": [
         { "type": "spike", "x": 500, "height": 40 },
         { "type": "spike", "x": 750, "height": 40 },
@@ -212,6 +215,7 @@
       "name": "Flux Hypnotique",
       "difficulty": "Moyen",
       "theme": "hypnotic",
+      "music": "musiques/level6.mp3",
       "objects": [
         { "type": "spike", "x": 480, "height": 40 },
         { "type": "orb", "x": 830, "height": 150 },
