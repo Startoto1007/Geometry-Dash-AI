@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Dash AI Version</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Menu principal -->
+    <div id="menu" class="screen active">
+        <div class="menu-container">
+            <!-- Logo SVG -->
+            <svg class="logo" viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cube animé -->
+                <g id="logoCube">
+                    <rect x="20" y="45" width="60" height="60" fill="#00ff00" stroke="#00cc00" stroke-width="3" transform="rotate(45 50 75)"/>
+                    <rect x="30" y="55" width="40" height="40" fill="#33ff33" opacity="0.6" transform="rotate(45 50 75)"/>
+                </g>
+                <!-- Texte -->
+                <text x="100" y="80" font-family="Arial Black, sans-serif" font-size="36" font-weight="bold" fill="#00ff88">
+                    GEOMETRY
+                </text>
+                <text x="100" y="115" font-family="Arial Black, sans-serif" font-size="36" font-weight="bold" fill="#00ccff">
+                    DASH AI
+                </text>
+                <!-- Décoration -->
+                <path d="M 100 125 L 380 125" stroke="#00ff88" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="385" cy="125" r="4" fill="#00ff88"/>
+            </svg>
+            
+            <div class="menu-buttons">
+                <button id="playBtn" class="btn-primary">Jouer</button>
+                <button id="editorBtn" class="btn-secondary">Éditeur de Niveaux</button>
+                <button id="customBtn" class="btn-secondary">Niveaux Personnalisés</button>
+            </div>
+            <button id="audioToggle" class="audio-toggle" title="Activer / couper le son">🔊</button>
+        </div>
+    </div>
+
+    <!-- Sélection de niveau -->
+    <div id="levelSelect" class="screen">
+        <div class="level-container">
+            <h2 class="subtitle">Choisir un niveau</h2>
+            <div id="levelList" class="level-list"></div>
+            <button id="backBtn" class="btn-back">Retour</button>
+        </div>
+    </div>
+
+    <!-- Éditeur de niveaux -->
+    <div id="editor" class="screen">
+        <div id="editorUI">
+            <div class="editor-header">
+                <h2>Éditeur de Niveaux</h2>
+                <button id="editorBackBtn" class="btn-back">Retour</button>
+            </div>
+            
+            <div class="editor-toolbar">
+                <div class="tool-section">
+                    <label>Nom du niveau:</label>
+                    <input type="text" id="levelNameInput" placeholder="Mon niveau" value="Niveau Personnalisé">
+                </div>
+                
+                <div class="tool-section">
+                    <label>Difficulté:</label>
+                    <select id="difficultySelect">
+                        <option value="Facile">Facile</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Difficile">Difficile</option>
+                        <option value="Extrême">Extrême</option>
+                    </select>
+                </div>
+                
+                <div class="tool-section">
+                    <label>Objet:</label>
+                    <div class="object-buttons">
+                        <button class="obj-btn active" data-type="spike">🔺 Spike</button>
+                        <button class="obj-btn" data-type="orb">⭐ Orbe</button>
+                        <button class="obj-btn" data-type="block">⬛ Bloc</button>
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <button id="clearBtn" class="btn-warning">Effacer Tout</button>
+                    <button id="testBtn" class="btn-primary">Tester</button>
+                    <button id="saveBtn" class="btn-primary">Sauvegarder</button>
+                </div>
+            </div>
+            
+            <canvas id="editorCanvas"></canvas>
+            
+            <div class="editor-help">
+                <p>🖱️ Clic gauche: Placer objet | Clic droit: Supprimer | Molette: Déplacer la vue</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zone de jeu -->
+    <div id="game" class="screen">
+        <div id="gameInfo">
+            <span id="levelName">Niveau 1</span>
+            <span id="attempts">Tentatives: 0</span>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <button id="quitBtn" class="btn-quit">Quitter</button>
+    </div>
+
+    <!-- Écran Game Over -->
+    <div id="gameOver" class="screen">
+        <div class="gameover-container">
+            <h2 class="gameover-title">Game Over!</h2>
+            <p id="progressText">Progression: 0%</p>
+            <div class="gameover-buttons">
+                <button id="retryBtn" class="btn-primary">Réessayer</button>
+                <button id="menuBtn" class="btn-secondary">Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran de victoire -->
+    <div id="victory" class="screen">
+        <div class="victory-container">
+            <h2 class="victory-title">Niveau Complété!</h2>
+            <p id="victoryAttempts">Tentatives: 0</p>
+            <div class="victory-buttons">
+                <button id="nextBtn" class="btn-primary">Niveau Suivant</button>
+                <button id="menuBtn2" class="btn-secondary">Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assets SVG (cachés, utilisés par le JS) -->
+    <svg id="svgAssets" style="display: none;">
+        <!-- Cube joueur -->
+        <symbol id="playerCube" viewBox="0 0 40 40">
+            <rect x="2" y="2" width="36" height="36" fill="#00ff00" stroke="#00cc00" stroke-width="2"/>
+            <rect x="8" y="8" width="24" height="24" fill="#33ff33" opacity="0.5"/>
+        </symbol>
+
+        <!-- Spike (obstacle triangulaire) -->
+        <symbol id="spike" viewBox="0 0 40 40">
+            <polygon points="20,5 35,35 5,35" fill="#ff0000" stroke="#cc0000" stroke-width="2"/>
+        </symbol>
+
+        <!-- Bloc sol -->
+        <symbol id="ground" viewBox="0 0 40 40">
+            <rect x="0" y="0" width="40" height="40" fill="#666666" stroke="#444444" stroke-width="1"/>
+            <rect x="4" y="4" width="32" height="32" fill="#888888" opacity="0.3"/>
+        </symbol>
+
+        <!-- Orbe (cercle avec effet) -->
+        <symbol id="orb" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="15" fill="#ffff00" opacity="0.8"/>
+            <circle cx="20" cy="20" r="10" fill="#ffff66" opacity="0.6"/>
+            <circle cx="20" cy="20" r="5" fill="#ffffff"/>
+        </symbol>
+
+        <!-- Portail -->
+        <symbol id="portal" viewBox="0 0 50 80">
+            <rect x="5" y="0" width="40" height="80" fill="#0088ff" opacity="0.6" rx="20"/>
+            <rect x="15" y="10" width="20" height="60" fill="#00ccff" opacity="0.8" rx="10"/>
+        </symbol>
+
+        <!-- Particule -->
+        <symbol id="particle" viewBox="0 0 10 10">
+            <circle cx="5" cy="5" r="4" fill="#ffffff"/>
+        </symbol>
+    </svg>
+
+    <script src="main.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
