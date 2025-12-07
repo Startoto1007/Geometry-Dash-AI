@@ -4,6 +4,7 @@
       "id": 1,
       "name": "L'Éveil",
       "difficulty": "Facile",
+      "theme": "awakening",
       "music": "musiques/level1.mp3",
       "objects": [
         { "type": "spike", "x": 500, "height": 40 },
@@ -42,6 +43,7 @@
       "id": 2,
       "name": "Premiers Bonds",
       "difficulty": "Facile",
+      "theme": "firstjumps",
       "music": "musiques/level2.mp3",
       "objects": [
         { "type": "spike", "x": 450, "height": 40 },
@@ -81,6 +83,7 @@
       "id": 3,
       "name": "Vagues Électriques",
       "difficulty": "Facile",
+      "theme": "electric",
       "objects": [
         { "type": "spike", "x": 500, "height": 40 },
         { "type": "spike", "x": 750, "height": 40 },
@@ -121,6 +124,7 @@
       "id": 4,
       "name": "Cascade Cosmique",
       "difficulty": "Moyen",
+      "theme": "cosmic",
       "objects": [
         { "type": "spike", "x": 450, "height": 40 },
         { "type": "spike", "x": 650, "height": 40 },
@@ -163,6 +167,7 @@
       "id": 5,
       "name": "Tempête Néon",
       "difficulty": "Moyen",
+      "theme": "neon",
       "objects": [
         { "type": "spike", "x": 500, "height": 40 },
         { "type": "spike", "x": 750, "height": 40 },
@@ -206,6 +211,7 @@
       "id": 6,
       "name": "Flux Hypnotique",
       "difficulty": "Moyen",
+      "theme": "hypnotic",
       "objects": [
         { "type": "spike", "x": 480, "height": 40 },
         { "type": "orb", "x": 830, "height": 150 },
@@ -249,6 +255,7 @@
       "id": 7,
       "name": "Odyssée Stellaire",
       "difficulty": "Difficile",
+      "theme": "stellar",
       "objects": [
         { "type": "spike", "x": 450, "height": 40 },
         { "type": "spike", "x": 650, "height": 40 },
@@ -297,6 +304,7 @@
       "id": 8,
       "name": "Dimension Parallèle",
       "difficulty": "Difficile",
+      "theme": "parallel",
       "objects": [
         { "type": "spike", "x": 500, "height": 40 },
         { "type": "spike", "x": 750, "height": 40 },
@@ -338,57 +346,6 @@
         { "type": "spike", "x": 14550, "height": 40 },
         { "type": "spike", "x": 14750, "height": 40 },
         { "type": "block", "x": 15150, "height": 130 }
-      ]
-    },
-    {
-      "id": 9,
-      "name": "Maelström Digital",
-      "difficulty": "Difficile",
-      "objects": [
-        { "type": "spike", "x": 480, "height": 40 },
-        { "type": "spike", "x": 730, "height": 40 },
-        { "type": "orb", "x": 1080, "height": 160 },
-        { "type": "spike", "x": 1580, "height": 40 },
-        { "type": "block", "x": 1980, "height": 130 },
-        { "type": "block", "x": 2020, "height": 130 },
-        { "type": "spike", "x": 2430, "height": 40 },
-        { "type": "orb", "x": 2780, "height": 210 },
-        { "type": "spike", "x": 3330, "height": 40 },
-        { "type": "spike", "x": 3530, "height": 40 },
-        { "type": "block", "x": 3930, "height": 120 },
-        { "type": "spike", "x": 4330, "height": 40 },
-        { "type": "orb", "x": 4680, "height": 230 },
-        { "type": "spike", "x": 5230, "height": 40 },
-        { "type": "block", "x": 5630, "height": 110 },
-        { "type": "spike", "x": 6030, "height": 40 },
-        { "type": "spike", "x": 6230, "height": 40 },
-        { "type": "orb", "x": 6580, "height": 190 },
-        { "type": "spike", "x": 7130, "height": 40 },
-        { "type": "block", "x": 7530, "height": 140 },
-        { "type": "spike", "x": 7930, "height": 40 },
-        { "type": "orb", "x": 8280, "height": 250 },
-        { "type": "spike", "x": 8830, "height": 40 },
-        { "type": "spike", "x": 9030, "height": 40 },
-        { "type": "block", "x": 9430, "height": 130 },
-        { "type": "block", "x": 9470, "height": 130 },
-        { "type": "spike", "x": 9880, "height": 40 },
-        { "type": "orb", "x": 10230, "height": 200 },
-        { "type": "spike", "x": 10780, "height": 40 },
-        { "type": "block", "x": 11180, "height": 120 },
-        { "type": "spike", "x": 11580, "height": 40 },
-        { "type": "spike", "x": 11780, "height": 40 },
-        { "type": "orb", "x": 12130, "height": 220 },
-        { "type": "spike", "x": 12680, "height": 40 },
-        { "type": "block", "x": 13080, "height": 110 },
-        { "type": "spike", "x": 13480, "height": 40 },
-        { "type": "orb", "x": 13830, "height": 240 },
-        { "type": "spike", "x": 14380, "height": 40 },
-        { "type": "spike", "x": 14580, "height": 40 },
-        { "type": "block", "x": 14980, "height": 140 },
-        { "type": "spike", "x": 15380, "height": 40 },
-        { "type": "orb", "x": 15730, "height": 210 },
-        { "type": "spike", "x": 16280, "height": 40 },
-        { "type": "block", "x": 16680, "height": 130 }
       ]
     }
   ]

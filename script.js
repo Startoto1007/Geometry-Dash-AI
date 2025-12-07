@@ -29,18 +29,14 @@ class LevelEditor {
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
         
-        // Events souris
         this.canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
         this.canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
         this.canvas.addEventListener('mouseup', () => this.onMouseUp());
         this.canvas.addEventListener('wheel', (e) => this.onWheel(e));
-        
-        // Prévenir le menu contextuel
         this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     }
     
     setupControls() {
-        // Boutons de sélection d'objet
         document.querySelectorAll('.obj-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.obj-btn').forEach(b => b.classList.remove('active'));
@@ -49,7 +45,6 @@ class LevelEditor {
             });
         });
         
-        // Boutons d'action
         document.getElementById('clearBtn').addEventListener('click', () => this.clear());
         document.getElementById('testBtn').addEventListener('click', () => this.test());
         document.getElementById('saveBtn').addEventListener('click', () => this.save());
@@ -75,12 +70,12 @@ class LevelEditor {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
-        if (e.button === 0) { // Clic gauche - placer objet
+        if (e.button === 0) {
             this.placeObject(x, y);
-        } else if (e.button === 1 || (e.button === 0 && e.shiftKey)) { // Clic milieu ou Shift+clic - déplacer vue
+        } else if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
             this.isDragging = true;
             this.lastMouseX = x;
-        } else if (e.button === 2) { // Clic droit - supprimer
+        } else if (e.button === 2) {
             this.removeObject(x, y);
         }
     }
@@ -109,23 +104,18 @@ class LevelEditor {
     }
     
     placeObject(screenX, screenY) {
-        // Convertir en coordonnées monde
         const worldX = screenX + this.camera.x;
         
-        // Snap à la grille - aligner au coin supérieur gauche de la case
         const gridX = Math.floor(worldX / this.gridSize) * this.gridSize;
         const gridY = Math.floor(screenY / this.gridSize) * this.gridSize;
         
-        // Ne pas placer en dehors du niveau (au-dessus du sol)
         if (gridY >= this.groundY - this.gridSize) return;
         
-        // Vérifier si un objet existe déjà à cette position exacte
         const existing = this.objects.find(obj => 
             Math.abs(obj.x - gridX) < 20 && Math.abs(obj.screenY - gridY) < 20
         );
         
         if (!existing) {
-            // Calculer la hauteur pour l'alignement au sol
             const height = this.groundY - gridY;
             
             this.objects.push({
@@ -141,12 +131,10 @@ class LevelEditor {
     removeObject(screenX, screenY) {
         const worldX = screenX + this.camera.x;
         
-        // Snap à la grille pour supprimer précisément
         const gridX = Math.floor(worldX / this.gridSize) * this.gridSize;
         const gridY = Math.floor(screenY / this.gridSize) * this.gridSize;
         
         this.objects = this.objects.filter(obj => {
-            // Supprimer l'objet sur la case cliquée
             return !(Math.abs(obj.x - gridX) < 20 && Math.abs(obj.screenY - gridY) < 20);
         });
         
@@ -168,6 +156,7 @@ class LevelEditor {
         
         const level = this.exportLevel();
         game.loadLevel(level);
+        game.resizeCanvas();
         uiManager.showScreen('game');
         setTimeout(() => game.start(), 100);
     }
@@ -185,13 +174,10 @@ class LevelEditor {
         level.name = levelName;
         level.difficulty = difficulty;
 
-        // Ajouter aux niveaux personnalisés
         uiManager.customLevels.push(level);
 
-        // Préparer le JSON à écrire
         const dataStr = JSON.stringify({ levels: uiManager.customLevels }, null, 2);
 
-        // Tentative : File System Access API — ouvrir le fichier existant pour écriture
         if (window.showOpenFilePicker) {
             try {
                 const [handle] = await window.showOpenFilePicker({
@@ -209,7 +195,6 @@ class LevelEditor {
             }
         }
 
-        // Si l'ouverture du fichier a échoué ou n'est pas disponible, proposer un save picker
         if (window.showSaveFilePicker) {
             try {
                 const handle = await window.showSaveFilePicker({
@@ -227,15 +212,11 @@ class LevelEditor {
             }
         }
 
-        // Fallback final : déclencher le téléchargement du fichier JSON
         this.downloadAllCustomLevelsJSON();
         alert(`Niveau "${levelName}" ajouté localement. Téléchargement déclenché en fallback.`);
     }
     
     exportLevel() {
-        // Pour corriger le décalage entre l'éditeur (qui a son propre canvas/toolbar)
-        // et le canvas de jeu, calculer la hauteur des objets par rapport au
-        // sol global attendu par le moteur (`window.innerHeight - 100`).
         const globalGroundY = window.innerHeight - 100;
         const canvasRect = this.canvas.getBoundingClientRect();
 
@@ -244,9 +225,7 @@ class LevelEditor {
             name: document.getElementById('levelNameInput').value || 'Niveau Personnalisé',
             difficulty: document.getElementById('difficultySelect').value,
             objects: this.objects.map(obj => {
-                // Position absolue Y (par rapport au haut de la fenêtre)
                 const absoluteY = canvasRect.top + obj.screenY;
-                // Hauteur du sommet de l'objet jusqu'au sol global
                 const height = Math.max(0, Math.round(globalGroundY - absoluteY)+1);
 
                 return {
@@ -258,19 +237,6 @@ class LevelEditor {
         };
     }
     
-    downloadJSON(level) {
-        const dataStr = JSON.stringify({ levels: [level] }, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-        const exportFileDefaultName = `${level.name.replace(/\s+/g, '_')}.json`;
-
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
-        linkElement.click();
-    }
-    
-    // Télécharge tous les niveaux personnalisés en fallback
     downloadAllCustomLevelsJSON() {
         const dataStr = JSON.stringify({ levels: uiManager.customLevels }, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
@@ -280,21 +246,14 @@ class LevelEditor {
         linkElement.setAttribute('download', 'levels-custom.json');
         linkElement.click();
     }
+    
     render() {
-        // Fond
         this.ctx.fillStyle = '#0a0a1f';
         this.ctx.fillRect(0, 0, this.width, this.height);
         
-        // Grille
         this.renderGrid();
-        
-        // Sol
         this.renderGround();
-        
-        // Objets
         this.renderObjects();
-        
-        // Info caméra
         this.renderInfo();
     }
     
@@ -302,7 +261,6 @@ class LevelEditor {
         this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
         this.ctx.lineWidth = 1;
         
-        // Lignes verticales
         const startX = Math.floor(this.camera.x / this.gridSize) * this.gridSize;
         for (let x = startX - this.camera.x; x < this.width; x += this.gridSize) {
             this.ctx.beginPath();
@@ -311,7 +269,6 @@ class LevelEditor {
             this.ctx.stroke();
         }
         
-        // Lignes horizontales
         for (let y = 0; y < this.height; y += this.gridSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(0, y);
@@ -404,9 +361,9 @@ class LevelEditor {
 
 class UIManager {
     constructor() {
-        // Écrans
         this.screens = {
             menu: document.getElementById('menu'),
+            settings: document.getElementById('settings'),
             levelSelect: document.getElementById('levelSelect'),
             editor: document.getElementById('editor'),
             game: document.getElementById('game'),
@@ -414,12 +371,13 @@ class UIManager {
             victory: document.getElementById('victory')
         };
         
-        // Boutons
         this.buttons = {
             play: document.getElementById('playBtn'),
+            settings: document.getElementById('settingsBtn'),
             editor: document.getElementById('editorBtn'),
             custom: document.getElementById('customBtn'),
             back: document.getElementById('backBtn'),
+            settingsBack: document.getElementById('settingsBackBtn'),
             editorBack: document.getElementById('editorBackBtn'),
             quit: document.getElementById('quitBtn'),
             retry: document.getElementById('retryBtn'),
@@ -428,27 +386,23 @@ class UIManager {
             next: document.getElementById('nextBtn')
         };
         
-        // Éléments
         this.levelList = document.getElementById('levelList');
         this.levelName = document.getElementById('levelName');
         this.attempts = document.getElementById('attempts');
         this.progressText = document.getElementById('progressText');
         this.victoryAttempts = document.getElementById('victoryAttempts');
         
-        // Données
         this.levels = [];
         this.customLevels = [];
         this.currentLevelIndex = 0;
         this.isCustomMode = false;
         
-        // Éditeur
         this.editor = null;
         
-        // Initialisation
         this.setupEventListeners();
+        this.setupSettings();
         this.loadLevels();
 
-        // Bouton audio (mute/unmute)
         const audioBtn = document.getElementById('audioToggle');
         if (audioBtn) {
             const updateIcon = () => {
@@ -464,35 +418,115 @@ class UIManager {
             updateIcon();
         }
     }
+
+    setupSettings() {
+        const musicVolume = document.getElementById('musicVolume');
+        const musicVolumeValue = document.getElementById('musicVolumeValue');
+        const sfxVolume = document.getElementById('sfxVolume');
+        const sfxVolumeValue = document.getElementById('sfxVolumeValue');
+        const gameSpeed = document.getElementById('gameSpeed');
+        const gameSpeedValue = document.getElementById('gameSpeedValue');
+        const particlesEnabled = document.getElementById('particlesEnabled');
+        const backgroundAnimations = document.getElementById('backgroundAnimations');
+
+        // Charger les paramètres sauvegardés
+        try {
+            const savedMusic = localStorage.getItem('musicVolume');
+            if (savedMusic) {
+                const vol = parseFloat(savedMusic) * 100;
+                musicVolume.value = vol;
+                musicVolumeValue.textContent = Math.round(vol) + '%';
+            }
+
+            const savedSfx = localStorage.getItem('sfxVolume');
+            if (savedSfx) {
+                const vol = parseFloat(savedSfx) * 100;
+                sfxVolume.value = vol;
+                sfxVolumeValue.textContent = Math.round(vol) + '%';
+            }
+
+            const savedSpeed = localStorage.getItem('gameSpeed');
+            if (savedSpeed) {
+                gameSpeed.value = savedSpeed;
+                gameSpeedValue.textContent = savedSpeed;
+            }
+
+            const savedParticles = localStorage.getItem('particlesEnabled');
+            if (savedParticles !== null) {
+                particlesEnabled.checked = savedParticles === 'true';
+            }
+
+            const savedBgAnim = localStorage.getItem('backgroundAnimations');
+            if (savedBgAnim !== null) {
+                backgroundAnimations.checked = savedBgAnim === 'true';
+            }
+        } catch (e) {}
+
+        musicVolume.addEventListener('input', (e) => {
+            const vol = e.target.value / 100;
+            musicVolumeValue.textContent = e.target.value + '%';
+            if (window.musicManager) {
+                window.musicManager.setVolume(vol);
+            }
+        });
+
+        sfxVolume.addEventListener('input', (e) => {
+            const vol = e.target.value / 100;
+            sfxVolumeValue.textContent = e.target.value + '%';
+            game.audio.setVolume(vol);
+            try {
+                localStorage.setItem('sfxVolume', vol.toString());
+            } catch (ex) {}
+        });
+
+        gameSpeed.addEventListener('input', (e) => {
+            gameSpeedValue.textContent = e.target.value;
+            game.gameSpeed = parseFloat(e.target.value);
+            try {
+                localStorage.setItem('gameSpeed', e.target.value);
+            } catch (ex) {}
+        });
+
+        particlesEnabled.addEventListener('change', (e) => {
+            game.particlesEnabled = e.target.checked;
+            try {
+                localStorage.setItem('particlesEnabled', e.target.checked ? 'true' : 'false');
+            } catch (ex) {}
+        });
+
+        backgroundAnimations.addEventListener('change', (e) => {
+            game.background.setAnimationEnabled(e.target.checked);
+            try {
+                localStorage.setItem('backgroundAnimations', e.target.checked ? 'true' : 'false');
+            } catch (ex) {}
+        });
+    }
     
     setupEventListeners() {
-        // Navigation
         this.buttons.play.addEventListener('click', () => this.showLevelSelect(false));
+        this.buttons.settings.addEventListener('click', () => this.showScreen('settings'));
         this.buttons.editor.addEventListener('click', () => this.showEditor());
         this.buttons.custom.addEventListener('click', () => this.showLevelSelect(true));
         this.buttons.back.addEventListener('click', () => this.showScreen('menu'));
+        this.buttons.settingsBack.addEventListener('click', () => this.showScreen('menu'));
         this.buttons.editorBack.addEventListener('click', () => this.showScreen('menu'));
         this.buttons.quit.addEventListener('click', () => this.quitGame());
         
-        // Gameplay
         this.buttons.retry.addEventListener('click', () => this.retryLevel());
         this.buttons.menu.addEventListener('click', () => this.showScreen('menu'));
         this.buttons.menu2.addEventListener('click', () => this.showScreen('menu'));
         this.buttons.next.addEventListener('click', () => this.nextLevel());
         
-        // Événements du jeu
         window.addEventListener('gameover', (e) => this.onGameOver(e.detail));
         window.addEventListener('victory', (e) => this.onVictory(e.detail));
     }
     
     async loadLevels() {
         try {
-            // Charger les niveaux prédéfinis
             const response = await fetch('levels.json');
             const data = await response.json();
             this.levels = data.levels;
             
-            // Charger les niveaux personnalisés
             try {
                 const customResponse = await fetch('levels-custom.json');
                 const customData = await customResponse.json();
@@ -507,36 +541,10 @@ class UIManager {
                 id: 1,
                 name: "Niveau 1",
                 difficulty: "Facile",
+                theme: "default",
                 objects: this.generateDefaultLevel()
             }];
         }
-    }
-
-    // Sauvegarde des niveaux personnalisés sur le disque
-    async saveCustomLevelsToFile() {
-        const dataStr = JSON.stringify({ levels: this.customLevels }, null, 2);
-
-        // Utiliser File System Access API si disponible (permet d'écrire directement)
-        if (window.showSaveFilePicker) {
-            const opts = {
-                suggestedName: 'levels-custom.json',
-                types: [
-                    {
-                        description: 'JSON',
-                        accept: { 'application/json': ['.json'] }
-                    }
-                ]
-            };
-
-            const handle = await window.showSaveFilePicker(opts);
-            const writable = await handle.createWritable();
-            await writable.write(dataStr);
-            await writable.close();
-            return;
-        }
-
-        // Si pas disponible, rejeter pour que l'appelant puisse effectuer un fallback (download)
-        return Promise.reject(new Error('File System Access API non disponible'));
     }
     
     generateDefaultLevel() {
@@ -564,34 +572,28 @@ class UIManager {
     }
     
     showScreen(screenName) {
-        // Cacher tous les écrans
         Object.values(this.screens).forEach(screen => {
             screen.classList.remove('active');
         });
         
-        // Afficher l'écran demandé
         if (this.screens[screenName]) {
             this.screens[screenName].classList.add('active');
         }
         
-        // Arrêter le jeu si on quitte l'écran de jeu
         if (screenName !== 'game') {
             game.stop();
         }
 
-        // Gérer la musique selon l'écran
         if (screenName === 'menu') {
-            // Musique d'accueil
             if (window.musicManager) window.musicManager.fadeTo('musiques/home.mp3');
-        } else if (screenName === 'levelSelect' || screenName === 'editor') {
-            // Garder musique d'accueil ou couper si souhaité
+        } else if (screenName === 'settings' || screenName === 'levelSelect' || screenName === 'editor') {
+            // Garder la musique actuelle
         }
     }
     
     showEditor() {
         this.showScreen('editor');
         
-        // Initialiser l'éditeur si ce n'est pas déjà fait
         if (!this.editor) {
             this.editor = new LevelEditor();
         } else {
@@ -603,14 +605,11 @@ class UIManager {
         this.isCustomMode = customMode;
         const levelsToShow = customMode ? this.customLevels : this.levels;
         
-        // Vider la liste
         this.levelList.innerHTML = '';
         
-        // Vérifier s'il y a des niveaux
         if (levelsToShow.length === 0) {
             this.levelList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Aucun niveau disponible. Créez-en un dans l\'éditeur !</p>';
         } else {
-            // Créer les éléments de niveau
             levelsToShow.forEach((level, index) => {
                 const levelItem = document.createElement('div');
                 levelItem.className = 'level-item';
@@ -634,23 +633,18 @@ class UIManager {
         
         if (!level) return;
         
-        // Charger le niveau dans le moteur
         game.loadLevel(level);
+        game.resizeCanvas();
         
-        // Mettre à jour l'interface
         this.levelName.textContent = level.name;
         this.updateAttempts();
         
-        // Afficher l'écran de jeu et démarrer
         this.showScreen('game');
         
-        // Petit délai pour laisser l'écran s'afficher
         setTimeout(() => {
-            // Charger la musique du niveau si renseignée
             if (level && level.music && window.musicManager) {
                 window.musicManager.fadeTo(level.music);
             } else if (window.musicManager) {
-                // si pas de musique définie, arrêter la musique d'arrière-plan
                 window.musicManager.fadeOut(300);
             }
 
@@ -672,7 +666,6 @@ class UIManager {
         if (this.currentLevelIndex < levels.length - 1) {
             this.startLevel(this.currentLevelIndex + 1);
         } else {
-            // Retour au menu si c'était le dernier niveau
             this.showScreen('menu');
         }
     }
@@ -689,7 +682,6 @@ class UIManager {
     onGameOver(detail) {
         this.progressText.textContent = `Progression: ${detail.progress}%`;
         
-        // Petit délai pour voir l'explosion
         setTimeout(() => {
             this.showScreen('gameOver');
         }, 500);
@@ -706,11 +698,9 @@ class UIManager {
     }
 }
 
-// Initialiser l'interface quand le DOM est prêt
 let uiManager;
 
 window.addEventListener('DOMContentLoaded', () => {
     uiManager = new UIManager();
-    // Tentative de lancer la musique d'accueil (sera silencieux si le navigateur bloque l'autoplay)
     if (window.musicManager) window.musicManager.fadeTo('musiques/home.mp3');
 });

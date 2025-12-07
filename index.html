@@ -33,8 +33,52 @@
                 <button id="playBtn" class="btn-primary">Jouer</button>
                 <button id="editorBtn" class="btn-secondary">Éditeur de Niveaux</button>
                 <button id="customBtn" class="btn-secondary">Niveaux Personnalisés</button>
+                <button id="settingsBtn" class="btn-secondary">Paramètres</button>
             </div>
             <button id="audioToggle" class="audio-toggle" title="Activer / couper le son">🔊</button>
+        </div>
+    </div>
+
+    <!-- Écran des paramètres -->
+    <div id="settings" class="screen">
+        <div class="settings-container">
+            <h2 class="subtitle">Paramètres</h2>
+            
+            <div class="settings-panel">
+                <div class="setting-item">
+                    <label for="musicVolume">Volume Musique</label>
+                    <input type="range" id="musicVolume" min="0" max="100" value="70">
+                    <span id="musicVolumeValue">70%</span>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="sfxVolume">Volume Effets Sonores</label>
+                    <input type="range" id="sfxVolume" min="0" max="100" value="100">
+                    <span id="sfxVolumeValue">100%</span>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="gameSpeed">Vitesse du Jeu</label>
+                    <input type="range" id="gameSpeed" min="3" max="8" step="0.5" value="5">
+                    <span id="gameSpeedValue">5</span>
+                </div>
+                
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="particlesEnabled" checked>
+                        Activer les Particules
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="backgroundAnimations" checked>
+                        Animations d'Arrière-plan
+                    </label>
+                </div>
+            </div>
+            
+            <button id="settingsBackBtn" class="btn-back">Retour</button>
         </div>
     </div>
 
@@ -97,6 +141,7 @@
 
     <!-- Zone de jeu -->
     <div id="game" class="screen">
+        <canvas id="backgroundCanvas"></canvas>
         <div id="gameInfo">
             <span id="levelName">Niveau 1</span>
             <span id="attempts">Tentatives: 0</span>
